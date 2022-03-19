@@ -1,19 +1,20 @@
-name: docker-compose-actions-workflow
+name: Build
+
 on:
   push:
     branches:
-      - 'master'
-    paths-ignore:
-      - 'DCOS/**'
-      - 'K8s/**'
-      - 'load-gen/**'
-      - 'OpenShift/**'
-      - 'Swarm/**'
+      - sonar
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu:alpine
     steps:
-      - uses: actions/checkout@v2
-      - name: Build the stack
-        run: docker-compose build
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKON: ${{ secrets.GITHUB_SONAR_TOKEN }} 
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
